@@ -33,3 +33,17 @@ ORDER BY 1;
 --2019-10-01	38	3214.99	84.61
 --2019-11-01	44	3771.12	85.71
 --2019-12-01	47	3302.93	70.28
+-- Top 10 revenue across complete order
+SELECT p.name as product_name,
+    p.category,
+    p.brand,
+    COUNT(oi.id) as units_sold,
+    ROUND(SUM(oi.sale_price), 2) as total_revenue
+FROM `bigquery-public-data.thelook_ecommerce.order_items` oi
+    JOIN `bigquery-public-data.thelook_ecommerce.products` p ON oi.product_id = p.id
+WHERE oi.status = 'Complete'
+GROUP BY p.name,
+    p.category,
+    p.brand
+ORDER BY total_revenue DESC
+LIMIT 10
