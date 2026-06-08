@@ -1,49 +1,69 @@
-# 🛒 TheLook eCommerce: End-to-End Data Analysis
+# 🛒 TheLook eCommerce Data Analysis
 
-## 📌 Project Overview
-This project analyzes the sales, product performance, and user behavior of **TheLook**, a fictional eCommerce clothing site. The goal is to identify revenue trends, pinpoint where users drop off in the purchasing funnel, and recommend actionable strategies to improve profitability.
+Hi there! Welcome to my analysis of **TheLook eCommerce**, a fictional online clothing retailer. 
 
----
+I started this project because I wanted to dig into a realistic retail dataset to understand what actually drives a business—from overall revenue trends down to how users behave on the website. I used **Google BigQuery** (Standard SQL) to crunch the numbers. 
 
-## 🏗️ Data Architecture & Tools
-- **Database:** Google BigQuery (Public Dataset)
-- **Languages:** Standard SQL
+Below are the most interesting stories the data told me, along with the SQL queries I wrote to find them.
 
 ---
 
-## 🔍 Key Business Questions & Findings
+### 📈 1. The Big Picture: How is the business doing?
+*(Check out the SQL here: [`revenue_order.sql`](sql%20notes%20dashboard/revenue_order.sql))*
 
-### 1. Macro Health: Revenue & Order Trends
-* **Query:** [`revenue_order.sql`](sql%20notes%20dashboard/revenue_order.sql)
-* **Goal:** Calculate monthly order volume, total revenue, and average order value (AOV) for completed transactions.
+My first question was simply: Is the business growing? I looked at early 2019 data to track the overall health of the company.
 
-#### 📊 Query Output (2019 Snapshot)
-| order_month | total_orders | total_revenue | average_order_value |
+| Month | Total Orders | Total Revenue | Average Order Value (AOV) |
 | :--- | :--- | :--- | :--- |
-| 2019-01-01 | 3 | $329.97 | $109.99 |
-| 2019-02-01 | 7 | $528.78 | $75.54 |
-| 2019-03-01 | 7 | $739.59 | $105.66 |
-| 2019-04-01 | 13 | $1,670.17 | $128.47 |
-| 2019-05-01 | 21 | $1,906.47 | $90.78 |
+| Jan 2019 | 3 | $329.97 | $109.99 |
+| Feb 2019 | 7 | $528.78 | $75.54 |
+| Mar 2019 | 7 | $739.59 | $105.66 |
+| Apr 2019 | 13 | $1,670.17 | $128.47 |
+| May 2019 | 21 | $1,906.47 | $90.78 |
 
-*Finding:* Consistent month-over-month growth in total orders and revenue throughout early 2019, while Average Order Value (AOV) fluctuates between $75 and $128.
+**What I learned:** The company saw really consistent, healthy growth month-over-month. Even though the Average Order Value jumped around quite a bit (between $75 and $128), the raw volume of orders kept pushing revenue higher.
 
-### 2. Inventory: Product Category Performance
-* **Query:** [`products.sql`](sql%20notes%20dashboard/products.sql)
-* **Goal:** Identify the Top 5 Product categories by total profit, total revenue, and average retail price.
+### 🧥 2. What's actually making money?
+*(Check out the SQL here: [`products.sql`](sql%20notes%20dashboard/products.sql))*
 
-#### 📊 Query Output (Top 5 Categories)
-| category | revenue | avg_retail_price | profit |
+Next, I wanted to know which products were keeping the lights on. I pulled the top 5 product categories by revenue and profit.
+
+| Category | Revenue | Avg. Retail Price | Profit |
 | :--- | :--- | :--- | :--- |
-| Outerwear & Coats | $331,073.49 | $149.27 | $183,554.17 |
-| Jeans | $313,829.25 | $97.04 | $146,248.92 |
-| Sweaters | $201,565.42 | $73.97 | $104,353.67 |
-| Swim | $166,008.77 | $56.89 | $81,737.49 |
-| Suits & Sport Coats | $161,670.98 | $122.02 | $96,282.19 |
+| Outerwear & Coats | $331,073 | $149.27 | $183,554 |
+| Jeans | $313,829 | $97.04 | $146,248 |
+| Sweaters | $201,565 | $73.97 | $104,353 |
+| Swim | $166,008 | $56.89 | $81,737 |
+| Suits & Sport Coats | $161,670 | $122.02 | $96,282 |
 
-*Finding:* "Outerwear & Coats" is the biggest driver for both top-line revenue and bottom-line profit, heavily influenced by its high average retail price ($149.27).
+**What I learned:** Outerwear is the absolute powerhouse of this store. Because coats have such a high price tag (averaging nearly $150), they bring in massive profit margins compared to other categories.
+
+### 📦 3. The Return Rate Problem
+I realized revenue isn't everything if people are returning the items. I ran another query to see which categories had the highest return rates.
+
+| Category | Total Orders | Returned Orders | Return Rate |
+| :--- | :--- | :--- | :--- |
+| Clothing Sets | 208 | 27 | 12.98% |
+| Plus | 4165 | 437 | 10.49% |
+| Pants & Capris | 3466 | 361 | 10.42% |
+
+**What I learned:** Almost 13% of all "Clothing Sets" get returned. If I were advising the business, I'd suggest looking heavily into sizing charts or quality control for those sets to stop the bleeding on profit margins.
+
+### 🕵️‍♂️ 4. The Funnel Mystery (My favorite find)
+*(Check out the SQL here: [`customer_funnel.sql`](sql%20notes%20dashboard/customer_funnel.sql))*
+
+Finally, I wanted to map out the customer journey: How many people land on the home page, add something to their cart, and actually buy it? 
+
+| Action | Unique Users |
+| :--- | :--- |
+| Visited Home Page | 63,206 |
+| Added to Cart | 80,151 |
+| Made a Purchase | 80,151 |
+
+**What I learned:** This was a fascinating data anomaly! 
+Normally, a funnel shrinks. But here, the number of users who add to cart matches the buyers exactly, and both are *higher* than the people who visit the homepage. Because this is a synthetic dataset generated by Google, this proves there is a hardcoded rule in the background: *If a fake user makes a purchase, generate exactly 1 cart event for them.* It also shows that thousands of "users" are bypassing the homepage entirely and landing directly on product pages!
 
 ---
 
-## 🛠️ Repository Structure
-1. `sql_queries/`: Contains all the SQL scripts used to extract and transform the data.
+### 📂 How to navigate this repo
+All the SQL scripts I wrote to extract these insights are located in the `sql_queries/` folder. Feel free to poke around!

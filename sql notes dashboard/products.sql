@@ -21,7 +21,6 @@ SELECT *,
         ORDER BY revenue DESC
     ) AS rank_in_cat
 FROM sales;
-
 /*
  ===============================================================================
  Query Purpose: Top 5 Product category by total profit,total revenue and avg retail_price
@@ -42,3 +41,25 @@ SELECT *
 FROM sales
 ORDER BY revenue DESC
 LIMIT 5;
+/*
+ ===============================================================================
+ Query Purpose: Which product categories have the highest return rate?
+ Dataset:       bigquery-public-data.thelook_ecommerce
+ ===============================================================================
+ */
+WITH sales AS (
+    SELECT 
+        p.category,
+        COUNT(*) AS total_orders,
+        COUNTIF(oi.status = 'Returned') AS returned_orders,
+        ROUND(COUNTIF(oi.status = 'Returned') / COUNT(*) * 100, 2) AS return_percent
+    FROM 
+        `bigquery-public-data.thelook_ecommerce.order_items` oi
+    JOIN 
+        `bigquery-public-data.thelook_ecommerce.products` p ON oi.product_id = p.id
+    GROUP BY 
+        1
+)
+SELECT *
+FROM sales
+ORDER BY return_percent DESC;
