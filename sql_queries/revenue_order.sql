@@ -25,20 +25,17 @@ ORDER BY
     1;
 
 /*
---- Result ---
--- month	orders	revenue	aov
--- 2019-01-01	3	329.97	109.99
--- 2019-02-01	7	528.78	75.54
--- 2019-03-01	7	739.59	105.66
--- 2019-04-01	13	1670.17	128.47
--- 2019-05-01	21	1906.47	90.78
--- 2019-06-01	19	1620.08	85.27
--- 2019-07-01	29	2185.69	75.37
--- 2019-08-01	31	3484.03	112.39
--- 2019-09-01	29	2693.27	92.87
--- 2019-10-01	38	3214.99	84.61
--- 2019-11-01	44	3771.12	85.71
--- 2019-12-01	47	3302.93	70.28
+--- Query Scope & Results Note ---
+This query tracks monthly order volume, total revenue, and average order value (AOV) across the entire multi-year timeline (2019-2026) using order-level completion status.
+
+Early Launch Phase (2019):
+- 2019-02-01: 9 orders, ₹822.91 revenue, ₹91.43 AOV
+- 2019-12-01: 60 orders, ₹4,693.13 revenue, ₹78.22 AOV
+
+Mature Scaling Phase (2025-2026):
+- 2025-12-01: 938 orders, ₹81,213.19 revenue, ₹86.58 AOV
+- 2026-03-01: 1,130 orders, ₹95,500.74 revenue, ₹84.51 AOV
+- 2026-05-01: 1,556 orders, ₹129,058.48 revenue, ₹82.94 AOV
 */
 
 /*
