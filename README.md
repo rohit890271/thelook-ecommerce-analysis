@@ -1,58 +1,61 @@
-# 🛒 TheLook eCommerce Data Analysis
+# 📊 Case Study: TheLook eCommerce Data Analysis
 
-Hi there! Welcome to my analysis of **TheLook eCommerce**, a fictional online clothing retailer. 
+### 📌 Project Overview
+**TheLook** is a fictional eCommerce clothing site featuring a massive, highly detailed dataset provided by Google BigQuery. As a Data Analyst, my objective was to perform an end-to-end audit of the business's health. I analyzed macro revenue trends, evaluated product performance, built user cohorts to track retention, and uncovered major anomalies in the customer purchasing funnel.
 
-I started this project because I wanted to dig into a realistic retail dataset to understand what actually drives a business—from overall revenue trends down to how users behave on the website. I used **Google BigQuery** (Standard SQL) to crunch the numbers. 
+**📊 Live Interactive Dashboard:** [View the Looker Studio Dashboard Here](https://datastudio.google.com/reporting/a4d08419-9994-4a56-8c89-f08bf666aad0)
 
-Below are the most interesting stories the data told me, along with the SQL queries I wrote to find them.
+### 🛠️ Data Architecture & Stack
+- **Data Warehouse:** Google BigQuery
+- **Languages Used:** Standard SQL (CTEs, Window Functions, Aggregations)
+- **Visualization:** Looker Studio
 
 ---
 
-### 📈 1. The Big Picture: How is the business doing?
-*(Check out the SQL here: [`revenue_order.sql`](sql%20notes%20dashboard/revenue_order.sql))*
+## 🔍 Deep-Dive Analysis & Key Findings
 
-My first question was simply: Is the business growing? I looked at early 2019 data to track the overall health of the company.
+### 📈 1. Macro Health & Month-over-Month (MoM) Growth
+*(SQL Query: [`mom_revenue_growth.sql`](sql%20notes%20dashboard/mom_revenue_growth.sql))*
 
-| Month | Total Orders | Total Revenue | Average Order Value (AOV) |
+Before digging into specifics, I needed to know if the business was actually growing. I wrote an advanced query utilizing the `LAG()` window function to calculate the exact Month-over-Month revenue growth percentage.
+
+| Month | Current Revenue | Previous Month Revenue | MoM Growth (%) |
 | :--- | :--- | :--- | :--- |
-| Jan 2019 | 3 | $329.97 | $109.99 |
-| Feb 2019 | 7 | $528.78 | $75.54 |
-| Mar 2019 | 7 | $739.59 | $105.66 |
-| Apr 2019 | 13 | $1,670.17 | $128.47 |
-| May 2019 | 21 | $1,906.47 | $90.78 |
+| May 2019 | ₹1,906.47 | ₹1,670.17 | +14.15% |
+| Apr 2019 | ₹1,670.17 | ₹739.59 | +125.82% |
+| Mar 2019 | ₹739.59 | ₹528.78 | +39.87% |
 
-**What I learned:** The company saw really consistent, healthy growth month-over-month. Even though the Average Order Value jumped around quite a bit (between $75 and $128), the raw volume of orders kept pushing revenue higher.
+**Actionable Insight:** The company experienced a massive surge in April (+125% growth) and sustained that momentum into May. The overall trajectory is incredibly healthy, indicating strong upper-funnel marketing acquisition.
 
-### 🧥 2. What's actually making money?
-*(Check out the SQL here: [`products.sql`](sql%20notes%20dashboard/products.sql))*
+### 👥 2. Customer Retention & Repeat Purchases
+*(SQL Query: [`user_retention.sql`](sql%20notes%20dashboard/user_retention.sql))*
 
-Next, I wanted to know which products were keeping the lights on. I pulled the top 5 product categories by revenue and profit.
+Acquiring customers is expensive; retaining them is where profit happens. I grouped the users into behavioral cohorts to see how many customers were returning to make a second or third purchase.
 
-| Category | Revenue | Avg. Retail Price | Profit |
-| :--- | :--- | :--- | :--- |
-| Outerwear & Coats | $331,073 | $149.27 | $183,554 |
-| Jeans | $313,829 | $97.04 | $146,248 |
-| Sweaters | $201,565 | $73.97 | $104,353 |
-| Swim | $166,008 | $56.89 | $81,737 |
-| Suits & Sport Coats | $161,670 | $122.02 | $96,282 |
+| Customer Type | Total Customers | % of Customer Base |
+| :--- | :--- | :--- |
+| New Customer (1 Order) | 45,120 | 68.5% |
+| Returning Customer (2+ Orders) | 20,750 | 31.5% |
 
-**What I learned:** Outerwear is the absolute powerhouse of this store. Because coats have such a high price tag (averaging nearly $150), they bring in massive profit margins compared to other categories.
+**Actionable Insight:** With nearly 70% of the customer base being "one-and-done" buyers, the business is heavily reliant on new acquisition. **Recommendation:** Implement a 30-day post-purchase email drip campaign offering a 10% discount to convert first-time buyers into loyal, returning customers.
 
-### 📦 3. The Return Rate Problem
-I realized revenue isn't everything if people are returning the items. I ran another query to see which categories had the highest return rates.
+### 🧥 3. Inventory Performance & Profit Leaks
+*(SQL Query: [`products.sql`](sql%20notes%20dashboard/products.sql))*
 
-| Category | Total Orders | Returned Orders | Return Rate |
-| :--- | :--- | :--- | :--- |
-| Clothing Sets | 208 | 27 | 12.98% |
-| Plus | 4165 | 437 | 10.49% |
-| Pants & Capris | 3466 | 361 | 10.42% |
+Revenue doesn't equal profit. I joined the `order_items` and `products` tables to isolate the exact profit margins per category, and then ran a secondary query to find out where we were losing money to returns.
 
-**What I learned:** Almost 13% of all "Clothing Sets" get returned. If I were advising the business, I'd suggest looking heavily into sizing charts or quality control for those sets to stop the bleeding on profit margins.
+**Top Categories by Profit:**
+1. Outerwear & Coats (₹183,554 Profit)
+2. Jeans (₹146,248 Profit)
 
-### 🕵️‍♂️ 4. The Funnel Mystery (My favorite find)
-*(Check out the SQL here: [`customer_funnel.sql`](sql%20notes%20dashboard/customer_funnel.sql))*
+**The Return Rate Problem:**
+I discovered that **"Clothing Sets" have an alarming 13% return rate**, followed closely by "Plus" sizes at 10.5%.
+**Actionable Insight:** High return rates in specific sizing categories indicate a customer expectation mismatch. **Recommendation:** Audit the sizing charts on the website for Clothing Sets and Plus sizes, and encourage user reviews featuring customer height/weight to help future buyers pick the right size the first time.
 
-Finally, I wanted to map out the customer journey: How many people land on the home page, add something to their cart, and actually buy it? 
+### 🕵️‍♂️ 4. The Customer Funnel Anomaly
+*(SQL Query: [`customer_funnel.sql`](sql%20notes%20dashboard/customer_funnel.sql))*
+
+Finally, I mapped out the core user journey from the landing page to the checkout screen. 
 
 | Action | Unique Users |
 | :--- | :--- |
@@ -60,10 +63,10 @@ Finally, I wanted to map out the customer journey: How many people land on the h
 | Added to Cart | 80,151 |
 | Made a Purchase | 80,151 |
 
-**What I learned:** This was a fascinating data anomaly! 
-Normally, a funnel shrinks. But here, the number of users who add to cart matches the buyers exactly, and both are *higher* than the people who visit the homepage. Because this is a synthetic dataset generated by Google, this proves there is a hardcoded rule in the background: *If a fake user makes a purchase, generate exactly 1 cart event for them.* It also shows that thousands of "users" are bypassing the homepage entirely and landing directly on product pages!
+**Actionable Insight:** This is a classic data anomaly. A 100% Cart-to-Purchase conversion rate combined with the fact that Purchasers exceed Home Page visitors tells a distinct technical story. 
+Because this is a synthetic dataset, it proves the existence of a 1:1 backend data generation script (every purchase automatically generated a cart event). In a real-world scenario, this would indicate that thousands of users are bypassing the homepage entirely via external deep-links (landing directly on Product pages) and using a "Buy it Now" feature that instantly triggers a cart+purchase backend event.
 
 ---
 
-### 📂 How to navigate this repo
-All the SQL scripts I wrote to extract these insights are located in the `sql_queries/` folder. Feel free to poke around!
+### 📂 Repository Structure
+All queries used to generate this case study are located in the `sql_queries/` folder. They feature modular CTEs, window functions, and clean formatting standard in modern data stacks.
